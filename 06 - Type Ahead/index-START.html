@@ -16,6 +16,60 @@
   </form>
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+const cities = [];
+
+
+//this whole thing below is a promise in other words firstStep is a promise
+let firstStep = fetch(endpoint)
+  .then(whatItReturned => whatItReturned.json())
+  .then(ConvertedData => cities.push(...ConvertedData))
+  .then(console.log('1st'));
+
+function findMatches(wordToMatch, cities){
+  const regexx = new RegExp(wordToMatch, 'gi')
+  return cities.filter(place => {
+    return place.city.match(regexx) || place.state.match(regexx)
+  })
+}
+
+function displayMatches(){
+  //inside this fucntion the this  is equal to the input element and the this.value equalt to whatever you type into it
+  const itemsToBeDisplayed = findMatches(this.value, cities)
+  const regexx = new RegExp(this.value, 'gi');
+  const html = itemsToBeDisplayed.map(place =>{
+    const highlightedCity = place.city.replace(regexx, `<span class='hl'>${this.value}</span>`)
+    const highlightedState = place.state.replace(regexx, `<span class='hl'>${this.value}</span>`)
+    return `
+    <li>
+      <span class="name">${highlightedCity}, ${highlightedState}</span>
+      <span class="population">${place.population},</span>
+    </li>`;
+  }).join('')
+  results.innerHTML = html
+  
+  
+}
+
+
+
+
+
+
+
+const searchUsingInput = document.querySelector('.search')
+const results = document.querySelector('.suggestions')
+
+searchUsingInput.addEventListener('keyup', displayMatches)
+
+
+
+// async function consoleIt(){
+//   console.log('calling')
+//   let result = await firstStep
+//   console.log('result obtained')
+//   console.log(cities)
+// }consoleIt()
+
 
 </script>
 </body>
